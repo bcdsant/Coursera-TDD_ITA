@@ -12,39 +12,31 @@ public class Biblioteca {
 		_usuarios = new HashSet<Usuario>();
 	}
 
-	public void adicionaLivroCatalogo(Livro livro)
-			throws AdicionarLivroInexistenteException {
+	public void adicionaLivroCatalogo(Livro livro) throws AdicionarLivroInexistenteException {
 		if (livro != null) {
 			livro.setNrCatalogo(this.getNrUnico());
 			_repositorioLivros.add(livro);
 		} else
-			throw new AdicionarLivroInexistenteException(
-					"--->N�o pode adicionar livro inexistente!");
+			throw new AdicionarLivroInexistenteException("--->Não pode adicionar livro inexistente!");
 	}
 
-	public void registraUsuario(String nome)
-			throws UsuarioJaRegistradoException, UsuarioComNomeVazioException,
-			UsuarioInexistenteException {
-		if (nome != null) {
-			if (!nome.isEmpty()) {
-				Usuario usuario = new Usuario(nome);
-				if (!_usuarios.contains(usuario)) {
-					_usuarios.add(usuario);
-				} else
-					throw new UsuarioJaRegistradoException("--->J� existe usu�rio com o nome \""
-							+ nome + "\"! Use outro nome!");
-			} else
-				throw new UsuarioComNomeVazioException("--->N�o pode registrar usuario com nome vazio!");
-		} else
-			throw new UsuarioInexistenteException("--->N�o pode registrar usuario inexistente!");
+	public void registraUsuario(String nomeUsuario)
+			throws UsuarioJaRegistradoException, UsuarioComNomeVazioException, UsuarioInexistenteException {
+		if (nomeUsuario == null)
+			throw new UsuarioInexistenteException("--->Não pode registrar usuário inexistente!");
+		if (nomeUsuario.isEmpty())
+			throw new UsuarioComNomeVazioException("--->Não pode registrar usuário com nome vazio!");
+		Usuario usuario = new Usuario(nomeUsuario);
+		if (_usuarios.contains(usuario))
+			throw new UsuarioJaRegistradoException(
+					"--->Já existe usuário com o nome \"" + nomeUsuario + "\"! Use outro nome!");
+		_usuarios.add(usuario);
 	}
 
 	public void emprestaLivro(Livro livro, Usuario usuario)
-			throws LivroIndisponivelParaEmprestimoException,
-			LivroOuUsuarioNulosException {
+			throws LivroIndisponivelParaEmprestimoException, LivroOuUsuarioNulosException {
 		if ((livro == null) && (usuario == null))
-			throw new LivroOuUsuarioNulosException(
-					"--->Livro e Usu�rio inexistentes!");
+			throw new LivroOuUsuarioNulosException("--->Livro e Usuário inexistentes!");
 		if (livro != null) {
 			if (usuario != null) {
 				if (livro.getUsuario() == null) {
@@ -52,19 +44,15 @@ public class Biblioteca {
 					livro.anexaUsuarioAoLivro(usuario);
 				} else
 					throw new LivroIndisponivelParaEmprestimoException(
-							"--->Livro " + livro
-									+ " indispon�vel para empr�stimo!");
+							"--->Livro " + livro + " indisponível para empréstimo!");
 			} else
-				throw new LivroOuUsuarioNulosException(
-						"--->N�o pode emprestar livro a Usu�rio inexistente!");
+				throw new LivroOuUsuarioNulosException("--->Não pode emprestar livro a Usuário inexistente!");
 		} else
-			throw new LivroOuUsuarioNulosException(
-					"--->N�o pode emprestar livro inexistente!");
+			throw new LivroOuUsuarioNulosException("--->Não pode emprestar livro inexistente!");
 	}
 
 	public void devolveLivro(Livro livro)
-			throws DevolveLivroDisponivelParaEmprestimoException,
-			DevolveLivroNuloParaEmprestimoException {
+			throws DevolveLivroDisponivelParaEmprestimoException, DevolveLivroNuloParaEmprestimoException {
 		if (livro != null) {
 			Usuario usuario = livro.getUsuario();
 			if (usuario != null) {
@@ -72,11 +60,9 @@ public class Biblioteca {
 				livro.desanexaUsuarioDoLivro();
 			} else
 				throw new DevolveLivroDisponivelParaEmprestimoException(
-						"---> Tentou devolver livro " + livro
-								+ " que est� dispon�vel para empr�stimo!");
+						"---> Tentou devolver livro " + livro + " que está disponível para empréstimo!");
 		} else
-			throw new DevolveLivroNuloParaEmprestimoException(
-					"--->N�o pode emprestar livro inexistente!");
+			throw new DevolveLivroNuloParaEmprestimoException("--->Não pode emprestar livro inexistente!");
 	}
 
 	public Livro buscaLivroPorNrCatalogo(int nrUnico) {
@@ -107,17 +93,14 @@ public class Biblioteca {
 					}
 				}
 			} else
-				throw new TituloOuAutorVazioException(
-						"--->Nome do titulo e/ou do autor �(s�o) vazio(s)<<<");
+				throw new TituloOuAutorVazioException("--->Nome do titulo e/ou do autor é(são) vazio(s)<<<");
 		} else
-			throw new TituloOuAutorNuloException(
-					"--->Nome do titulo e/ou do autor �(s�o) nulo(s)<<<");
+			throw new TituloOuAutorNuloException("--->Nome do titulo e/ou do autor é(são) nulo(s)<<<");
 		return livroAchado;
 	}
 
 	public Usuario buscaUsuarioPorNome(String nome)
-			throws BuscaUsuarioComNomeVazioException,
-			BuscaUsuarioComNomeNuloException {
+			throws BuscaUsuarioComNomeVazioException, BuscaUsuarioComNomeNuloException {
 		Usuario usuarioAchado = null;
 		if ((nome != null)) {
 			if (!nome.isEmpty()) {
@@ -130,17 +113,15 @@ public class Biblioteca {
 					}
 				}
 			} else
-				throw new BuscaUsuarioComNomeVazioException(
-						"--->Nome do usu�rio � vazio<<<");
+				throw new BuscaUsuarioComNomeVazioException("--->Nome do usuário é vazio<<<");
 		} else
-			throw new BuscaUsuarioComNomeNuloException(
-					"--->Nome do usu�rio � nulo<<<");
+			throw new BuscaUsuarioComNomeNuloException("--->Nome do usuário é nulo<<<");
 		return usuarioAchado;
 	}
 
 	public void exibeLivrosDisponiveis() {
 		System.out.println("Biblioteca: " + _nome);
-		System.out.println(">>>Livros Dispon�veis para Empr�stimo<<<");
+		System.out.println(">>>Livros Disponíveis para Empréstimo<<<");
 		if (_repositorioLivros.size() != 0) {
 			Iterator<Livro> iter = _repositorioLivros.iterator();
 			while (iter.hasNext() == true) {
@@ -150,8 +131,8 @@ public class Biblioteca {
 				}
 			}
 		} else
-			System.out.println("---> Nenhum livro no reposit�rio");
-		System.out.println("<<< Livros Dispon�veis >>>");
+			System.out.println("---> Nenhum livro no repositório");
+		System.out.println("<<< Livros Disponíveis >>>");
 		System.out.println();
 	}
 
@@ -163,20 +144,19 @@ public class Biblioteca {
 			while (iter.hasNext() == true) {
 				Livro livro = (Livro) iter.next();
 				if (livro.getUsuario() != null) {
-					System.out.println("\t\t"
-							+ "--------------------------------------------");
+					System.out.println("\t\t" + "--------------------------------------------");
 					livro.exibe();
 				}
 			}
 		} else
-			System.out.println("---> Nenhum livro no reposit�rio");
+			System.out.println("---> Nenhum livro no repositório");
 		System.out.println("<<< Livros Emprestados >>>");
 		System.out.println();
 	}
 
 	public void exibeUsuarios() {
 		System.out.println("Biblioteca: " + _nome);
-		System.out.println(">>>Usu�rios da Biblioteca<<<");
+		System.out.println(">>>Usuários da Biblioteca<<<");
 		if (_usuarios.size() != 0) {
 			Iterator<Usuario> iter = _usuarios.iterator();
 			while (iter.hasNext() == true) {
@@ -184,8 +164,8 @@ public class Biblioteca {
 				usuario.exibe();
 			}
 		} else
-			System.out.println("---> Nenhum usu�rio na Biblioteca");
-		System.out.println("<<< Usu�rios >>>");
+			System.out.println("---> Nenhum usuário na Biblioteca");
+		System.out.println("<<< Usuários >>>");
 		System.out.println();
 	}
 

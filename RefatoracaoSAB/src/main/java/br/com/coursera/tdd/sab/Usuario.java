@@ -45,7 +45,7 @@ public class Usuario implements Comparable<Object> {
 
 	}
 
-	//@Override
+	@Override
 	public int compareTo(Object obj) {
 		Usuario usuario = (Usuario) obj;
 		String nome = usuario.getNome();
