@@ -1,100 +1,95 @@
 package br.com.coursera.tdd.semana1.teste;
 
 import static org.junit.Assert.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+
 import br.com.coursera.tdd.semana1.CamelCase;
 import br.com.coursera.tdd.semana1.exception.StringInvalidaException;
 
 public class TesteCamelCase {
 
-	private CamelCase camel;
-	private List<String> listaTeste;
-	
+	private List<String> resultadoEsperado = null;
+
 	@Before
 	public void inicializa() {
-		listaTeste = new ArrayList<String>();
-		camel = new CamelCase();
+		resultadoEsperado = new ArrayList<String>();
 	}
-	
+
 	@Test
 	public void todasMinusculas() {
-		String stringTeste = "todasminusculas";
-		listaTeste.add(stringTeste);
-		assertEquals(listaTeste, camel.converterCamelCase(stringTeste));
+		resultadoEsperado.add("nome");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("nome"));
 	}
-	
+
 	@Test
 	public void primeiraMaiuscula() {
-		String stringTeste = "Palavra";
-		listaTeste.add(stringTeste.toLowerCase());
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
+		resultadoEsperado.add("nome");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("Nome"));
 	}
-	
-	@Test(expected=StringInvalidaException.class)
-	public void stringVazia() {
-		String stringTeste = "";
-		listaTeste.add(stringTeste);
-		assertEquals(listaTeste, camel.converterCamelCase(stringTeste));
-	}
-	
-	@Test(expected=StringInvalidaException.class)
-	public void stringNula() {
-		String stringTeste = null;
-		listaTeste.add(stringTeste);
-		assertEquals(listaTeste, camel.converterCamelCase(stringTeste));
-	}
-	
+
 	@Test
 	public void nomeComposto() {
-		String stringTeste = "nomeComposto";
-		listaTeste.add("nome");
-		listaTeste.add("composto");
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
-		listaTeste.add("triplo");
-		stringTeste="NomeCompostoTriplo";
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
+		resultadoEsperado.add("nome");
+		resultadoEsperado.add("composto");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("nomeComposto"));
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("NomeComposto"));
+		resultadoEsperado.add("triplo");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("nomeCompostoTriplo"));
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("NomeCompostoTriplo"));
 	}
-	
+
 	@Test
-	public void sigla() {
-		String stringTeste = "CPF";
-		listaTeste.add("CPF");
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
+	public void siglasEAcronimos() {
+		resultadoEsperado.add("CPF");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("CPF"));
 	}
-	
+
 	@Test
-	public void siglaNaPalavra() {
-		String stringTeste = "numeroCPF";
-		listaTeste.add("numero");
-		listaTeste.add("CPF");
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
-		listaTeste.add("contribuinte");
-		stringTeste = "numeroCPFContribuinte";
-		assertEquals(listaTeste,camel.converterCamelCase(stringTeste));
+	public void siglasEAcronimosEmUmaFrase() {
+		resultadoEsperado.add("numero");
+		resultadoEsperado.add("CPF");
+		resultadoEsperado.add("contribuinte");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("numeroCPFContribuinte"));
 	}
-	
-	@Test(expected=StringInvalidaException.class)
-	public void digitosNoInicio() {
-		String stringTeste = "10Primeiros";
-		camel.converterCamelCase(stringTeste);
-	}
-	
-	@Test(expected=StringInvalidaException.class)
-	public void caracterEspecial() {
-		String stringTeste = "nome#Composto";
-		camel.converterCamelCase(stringTeste);
-	}
-	
+
 	@Test
-	public void digitosNoMeio() {
-		String stringTeste = "recupera10Primeiros";
-		listaTeste.add("recupera");
-		listaTeste.add("10");
-		listaTeste.add("primeiros");
-		assertEquals(listaTeste, camel.converterCamelCase(stringTeste));		
+	public void digitosEntrePalavras() {
+		resultadoEsperado.add("recupera");
+		resultadoEsperado.add("10");
+		resultadoEsperado.add("primeiros");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("recupera10Primeiros"));
 	}
-	
+
+	@Test
+	public void digitosESiglasOuAcronimosEmUmaFrase() {
+		resultadoEsperado.add("recupera");
+		resultadoEsperado.add("10");
+		resultadoEsperado.add("primeiros");
+		resultadoEsperado.add("CPF");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("recupera10PrimeirosCPF"));
+	}
+
+	@Test(expected = StringInvalidaException.class)
+	public void stringInvalidaPorComecarComDigitos() {
+		resultadoEsperado.add("10");
+		resultadoEsperado.add("primeiros");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("10Primeiros"));
+	}
+
+	@Test(expected = StringInvalidaException.class)
+	public void stringInvalidaCaracteresEspeciais() {
+		resultadoEsperado.add("nome");
+		resultadoEsperado.add("#");
+		resultadoEsperado.add("composto");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("nome#Composto"));
+	}
+
+	@Test(expected = StringInvalidaException.class)
+	public void stringInvalidaSomenteCaracteresEspeciais() {
+		resultadoEsperado.add("#@%$¨&*");
+		assertEquals(resultadoEsperado, CamelCase.converterCamelCase("#@%$¨&*"));
+	}
 }
