@@ -20,17 +20,22 @@ public class Biblioteca {
 			throw new AdicionarLivroInexistenteException("--->Não pode adicionar livro inexistente!");
 	}
 
-	public void registraUsuario(String nomeUsuario)
+	public void registraUsuario(String nome)
 			throws UsuarioJaRegistradoException, UsuarioComNomeVazioException, UsuarioInexistenteException {
-		if (nomeUsuario == null)
+		if (nome == null) {
 			throw new UsuarioInexistenteException("--->Não pode registrar usuário inexistente!");
-		if (nomeUsuario.isEmpty())
+		}
+
+		if (nome.isEmpty()) {
 			throw new UsuarioComNomeVazioException("--->Não pode registrar usuário com nome vazio!");
-		Usuario novoUsuario = new Usuario(nomeUsuario);
-		if (_usuarios.contains(novoUsuario))
+		}
+
+		Usuario usuario = new Usuario(nome);
+		if (_usuarios.contains(usuario)) {
 			throw new UsuarioJaRegistradoException(
-					"--->Já existe usuário com o nome \"" + nomeUsuario + "\"! Use outro nome!");
-		_usuarios.add(novoUsuario);
+					"--->Já existe usuário com o nome \"" + nome + "\"! Use outro nome!");
+		}
+		_usuarios.add(usuario);
 	}
 
 	public void emprestaLivro(Livro livro, Usuario usuario)
